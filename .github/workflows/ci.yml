@@ -12,13 +12,12 @@ concurrency:
 
 jobs:
   pest:
-    name: PEST - PHP ${{ matrix.php }} - ${{ matrix.stability }}
+    name: PEST - PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
         php: [8.4, 8.3, 8.2]
-        stability: [prefer-stable]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +29,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Composer install
-        run: composer install --${{ matrix.stability }} --prefer-dist --no-interaction --no-ansi --no-progress
+        run: composer install --no-interaction --no-ansi --no-progress
       - name: Run PEST (with coverage)
         run: composer test:coverage
   phpstan:
