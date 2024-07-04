@@ -1,0 +1,13 @@
+{
+    "name": "artemeon/support",
+    "description": "Support package for the AGP@ARTEMEON software suite",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Artemeon\\Support\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
