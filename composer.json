@@ -4,6 +4,9 @@
     "type": "library",
     "license": "MIT",
     "minimum-stability": "stable",
+    "scripts": {
+        "phpstan": "./vendor/bin/phpstan --memory-limit=2G"
+    },
     "autoload": {
         "psr-4": {
             "Artemeon\\Support\\": "src/"
@@ -21,11 +24,15 @@
     "require-dev": {
         "pestphp/pest": "^2.34",
         "pestphp/pest-plugin-type-coverage": "^2.8",
-        "laravel/pint": "^1.16"
+        "laravel/pint": "^1.16",
+        "phpstan/phpstan": "^1.11",
+        "phpstan/phpstan-strict-rules": "^1.6",
+        "phpstan/extension-installer": "^1.4"
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     }
 }

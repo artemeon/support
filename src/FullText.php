@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 
 final class FullText
 {
+    /** @var Collection<int, string> */
     private Collection $parts;
 
     public static function make(float | int | string | null ...$parts): self
@@ -22,7 +23,7 @@ final class FullText
 
     public function search(?string $query): float
     {
-        if (empty($query)) {
+        if ($query === '' || $query === null) {
             return 1.0;
         }
 
@@ -53,12 +54,15 @@ final class FullText
         return $relevance;
     }
 
+    /**
+     * @return Collection<int, string>
+     */
     private function tokenize(float | int | string | null ...$parts): Collection
     {
         $fullText = trim(implode(' ', Collection::make($parts)->map(static fn (mixed $part) => (string) $part)->toArray()));
 
         return Collection::make(explode(' ', $fullText))
-            ->filter(static fn (string $token) => preg_match('/[A-Z0-9]/ui', $token))
-            ->map(static fn (string $token) => mb_strtolower($token, 'UTF-8'));
+            ->filter(static fn (string $token): bool => (bool) preg_match('/[A-Z0-9]/ui', $token))
+            ->map(static fn (string $token): string => mb_strtolower($token, 'UTF-8'));
     }
 }

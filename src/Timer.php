@@ -6,8 +6,8 @@ namespace Artemeon\Support;
 
 final class Timer
 {
-    private float $start;
-    private float $end;
+    private ?float $start = null;
+    private ?float $end = null;
 
     public function start(): void
     {
@@ -21,6 +21,10 @@ final class Timer
 
     public function getDurationInSeconds(): float
     {
+        if ($this->start === null || $this->end === null) {
+            return 0;
+        }
+
         return round(($this->end - $this->start), 6);
     }
 }

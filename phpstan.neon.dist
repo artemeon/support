@@ -1,0 +1,14 @@
+includes:
+    - phar://phpstan.phar/conf/bleedingEdge.neon
+
+parameters:
+    level: 9
+    paths:
+        - ./src
+        - ./tests
+    checkUninitializedProperties: true
+    # checkImplicitMixed: true
+    checkBenevolentUnionTypes: true
+    rememberPossiblyImpureFunctionValues: false
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
