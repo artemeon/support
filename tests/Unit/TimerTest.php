@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Artemeon\Support\Timer;
 
-it('should measure execution time', function (int $seconds) {
+it('should measure execution time', function (int $seconds): void {
     $timer = new Timer();
     $timer->start();
     sleep($seconds);

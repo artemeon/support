@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Artemeon\Support\FullText;
 
-it('should calculate relevance', function (string $input, string $firstQuery, string $secondQuery) {
+it('should calculate relevance', function (string $input, string $firstQuery, string $secondQuery): void {
     $firstRelevance = FullText::make($input)->search($firstQuery);
     $secondRelevance = FullText::make($input)->search($secondQuery);
 
@@ -15,6 +15,6 @@ it('should calculate relevance', function (string $input, string $firstQuery, st
     ['non pariatur sunt', 'ariatur', 'aratur'],
 ]);
 
-it('should return 1.0 when no query was provided', function () {
+it('should return 1.0 when no query was provided', function (): void {
     expect(FullText::make('foo bar')->search(''))->toBe(1.0);
 });

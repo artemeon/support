@@ -20,7 +20,8 @@
     },
     "require-dev": {
         "pestphp/pest": "^2.34",
-        "pestphp/pest-plugin-type-coverage": "^2.8"
+        "pestphp/pest-plugin-type-coverage": "^2.8",
+        "laravel/pint": "^1.16"
     },
     "config": {
         "allow-plugins": {
