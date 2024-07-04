@@ -21,8 +21,12 @@ final class Timer
 
     public function getDurationInSeconds(): float
     {
-        if ($this->start === null || $this->end === null) {
-            return 0;
+        if ($this->start === null) {
+            return 0.0;
+        }
+
+        if ($this->end === null) {
+            $this->end();
         }
 
         return round(($this->end - $this->start), 6);
