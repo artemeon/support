@@ -29,6 +29,6 @@ final class Timer
             $this->end();
         }
 
-        return round(($this->end - $this->start), 6);
+        return round(((float) $this->end - (float) $this->start), 6);
     }
 }
