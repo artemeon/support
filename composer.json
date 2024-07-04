@@ -3,11 +3,28 @@
     "description": "Support package for the AGP@ARTEMEON software suite",
     "type": "library",
     "license": "MIT",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Artemeon\\Support\\": "src/"
         }
     },
-    "minimum-stability": "stable",
-    "require": {}
+    "autoload-dev": {
+        "psr-4": {
+            "Artemeon\\Support\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.2",
+        "illuminate/support": "^11.14.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.34",
+        "pestphp/pest-plugin-type-coverage": "^2.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }
