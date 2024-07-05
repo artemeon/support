@@ -6,9 +6,11 @@
     "minimum-stability": "stable",
     "scripts": {
         "test": "./vendor/bin/pest --parallel",
-        "test:watch": "comppser test -- --watch",
+        "test:watch": "composer test -- --watch",
         "test:coverage": "XDEBUG_MODE=coverage composer test -- --coverage --min=100",
         "test:coverage:watch": "composer test:coverage -- --watch",
+        "test:type-coverage": "composer test -- --type-coverage --min=100",
+        "test:type-coverage:watch": "composer test:type-coverage -- --watch",
         "phpstan": "./vendor/bin/phpstan --memory-limit=2G",
         "pint": "./vendor/bin/pint"
     },
