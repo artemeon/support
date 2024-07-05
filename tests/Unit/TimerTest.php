@@ -22,7 +22,7 @@ it('should return 0 if used incorrectly', function (): void {
 it('should end the timer automatically', function (): void {
     $timer = new Timer();
     $timer->start();
-    sleep(1);
+    usleep(100_000);
 
-    expect((int) $timer->getDurationInSeconds())->toBe(1);
+    expect(abs($timer->getDurationInSeconds() - 100_000 / 1_000_000))->toBeLessThan(0.02);
 });
