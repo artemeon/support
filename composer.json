@@ -6,7 +6,9 @@
     "minimum-stability": "stable",
     "scripts": {
         "test": "./vendor/bin/pest --parallel",
-        "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --parallel --coverage --min=100",
+        "test:watch": "comppser test -- --watch",
+        "test:coverage": "XDEBUG_MODE=coverage composer test -- --coverage --min=100",
+        "test:coverage:watch": "composer test:coverage -- --watch",
         "phpstan": "./vendor/bin/phpstan --memory-limit=2G",
         "pint": "./vendor/bin/pint"
     },
@@ -30,12 +32,14 @@
         "laravel/pint": "^1.16",
         "phpstan/phpstan": "^1.11",
         "phpstan/phpstan-strict-rules": "^1.6",
-        "phpstan/extension-installer": "^1.4"
+        "phpstan/extension-installer": "^1.4",
+        "pestphp/pest-plugin-watch": "^2.1"
     },
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "phpstan/extension-installer": true
-        }
+        },
+        "process-timeout": 0
     }
 }
