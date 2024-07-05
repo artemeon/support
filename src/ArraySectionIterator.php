@@ -98,6 +98,7 @@ class ArraySectionIterator extends ArrayIterator implements ArrayAccess, Countab
 
     /**
      * @param int | string | null $offset
+     *
      * @return TValue | null
      */
     public function offsetGet(mixed $offset): mixed
