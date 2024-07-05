@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 use Artemeon\Support\Timer;
 
-it('should measure execution time', function (string $seconds): void {
+it('should measure execution time', function (int $microseconds): void {
     $timer = new Timer();
     $timer->start();
-    sleep((int) $seconds);
+    usleep($microseconds);
     $timer->end();
 
-    expect((int) $timer->getDurationInSeconds())->toBe((int) $seconds);
-})->with(['0', '1', '2']);
+    expect(abs($timer->getDurationInSeconds() - $microseconds / 1_000_000))->toBeLessThan(0.02);
+})->with([[100_000], [150_000], [250_000]]);
 
 it('should return 0 if used incorrectly', function (): void {
     $timer = new Timer();
