@@ -76,7 +76,7 @@ final class Date implements DateInterface
      *
      * @throw InvalidTimestampFormatException
      */
-    public function toDateTime(): \DateTimeInterface
+    public function toDateTime(): DateTime
     {
         $date = DateTime::createFromFormat($this->strParseFormat, $this->longTimestamp);
         if ($date === false) {
@@ -634,6 +634,7 @@ final class Date implements DateInterface
         $me->setIntYear($year);
         $me->setIntMonth($month);
         $me->setIntDay($day);
+
         return $me;
     }
 
@@ -643,6 +644,7 @@ final class Date implements DateInterface
         $me->setIntHour($hour);
         $me->setIntMin($minute);
         $me->setIntSec($second);
+
         return $me;
     }
 
@@ -660,6 +662,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setPreviousDay();
+
         return $me;
     }
 
@@ -667,6 +670,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setNextDay();
+
         return $me;
     }
 
@@ -674,6 +678,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setPreviousMonth();
+
         return $me;
     }
 
@@ -681,6 +686,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setNextMonth();
+
         return $me;
     }
 
@@ -688,6 +694,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setPreviousYear();
+
         return $me;
     }
 
@@ -695,6 +702,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->setNextYear();
+
         return $me;
     }
 
@@ -702,6 +710,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->subtractInterval($interval);
+
         return $me;
     }
 
@@ -709,6 +718,7 @@ final class Date implements DateInterface
     {
         $me = clone $this;
         $me->addInterval($interval);
+
         return $me;
     }
 }
