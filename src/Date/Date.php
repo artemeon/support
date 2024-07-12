@@ -12,29 +12,12 @@ use JetBrains\PhpStorm\Deprecated;
 
 final class Date implements DateInterface
 {
-    public const INT_DAY_SUNDAY = 0;
-
-    public const INT_DAY_MONDAY = 1;
-
-    public const INT_DAY_TUESDAY = 2;
-
-    public const INT_DAY_WEDNESDAY = 3;
-
-    public const INT_DAY_THURSDAY = 4;
-
-    public const INT_DAY_FRIDAY = 5;
-
-    public const INT_DAY_SATURDAY = 6;
+    public const DATE_COMPARE_GREATER_THAN = 1;
+    public const DATE_COMPARE_EQUALS = 0;
+    public const DATE_COMPARE_LESSER_THAN = -1;
 
     private string $strParseFormat = 'YmdHis';
-
     private string $longTimestamp = '';
-
-    public const DATE_COMPARE_GREATER_THAN = 1;
-
-    public const DATE_COMPARE_EQUALS = 0;
-
-    public const DATE_COMPARE_LESSER_THAN = -1;
 
     /**
      * Creates an instance of the Date and initializes it with the current date if no value is passed.
