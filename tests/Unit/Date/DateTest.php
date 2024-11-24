@@ -1,37 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AGP\System\Tests\Unit\Date;
 
 use Artemeon\Support\Date\Date;
+use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
-class DateTest extends TestCase
+final class DateTest extends TestCase
 {
     public function testTimezoneShifts(): void
     {
-        $objDate = new Date('20141026000000');
+        $date = new Date('20141026000000');
 
-        $objDate->setNextDay();
-        self::assertEquals($objDate->getLongTimestamp(), '20141027000000');
+        $date->setNextDay();
+        self::assertEquals('20141027000000', $date->getLongTimestamp());
 
-        $objDate = new Date('20141027000000');
-        $objDate->setPreviousDay();
+        $date = new Date('20141027000000');
+        $date->setPreviousDay();
 
-        self::assertEquals($objDate->getLongTimestamp(), '20141026000000');
+        self::assertEquals('20141026000000', $date->getLongTimestamp());
     }
 
     public function testSameDay(): void
     {
-        $objDate = new Date();
+        $date = new Date();
 
-        self::assertTrue($objDate->isSameDay(new Date()));
+        self::assertTrue($date->isSameDay(new Date()));
 
-        $objDate->setNextDay();
-        self::assertTrue(!$objDate->isSameDay(new Date()));
+        $date->setNextDay();
+        self::assertNotTrue($date->isSameDay(new Date()));
     }
 
     public function testFormat(): void
@@ -43,79 +46,79 @@ class DateTest extends TestCase
 
     public function testDateParams(): void
     {
-        $objDate = new Date(0);
-        self::assertEquals($objDate->getLongTimestamp(), 00000000000000);
+        $date = new Date(0);
+        self::assertEquals(00000000000000, $date->getLongTimestamp());
 
-        $objDate = new Date('0');
-        self::assertEquals($objDate->getLongTimestamp(), 00000000000000);
+        $date = new Date('0');
+        self::assertEquals(00000000000000, $date->getLongTimestamp());
 
-        $objDate = new Date('');
-        self::assertTrue($objDate->getLongTimestamp() > 0);
+        $date = new Date('');
+        self::assertTrue($date->getLongTimestamp() > 0);
 
-        $objDate = new Date(null);
-        self::assertTrue($objDate->getLongTimestamp() > 0);
+        $date = new Date(null);
+        self::assertTrue($date->getLongTimestamp() > 0);
 
-        $objDate = new Date(20140310123627);
-        self::assertEquals($objDate->getLongTimestamp(), 20140310123627);
+        $date = new Date(20140310123627);
+        self::assertEquals(20140310123627, $date->getLongTimestamp());
 
-        $objDate = new Date('20140310123627');
-        self::assertEquals($objDate->getLongTimestamp(), 20140310123627);
+        $date = new Date('20140310123627');
+        self::assertEquals(20140310123627, $date->getLongTimestamp());
 
-        $objDate = new Date('');
-        $objDate2 = new Date($objDate);
-        self::assertEquals($objDate2->getLongTimestamp(), $objDate->getLongTimestamp());
+        $date = new Date('');
+        $date2 = new Date($date);
+        self::assertEquals($date2->getLongTimestamp(), $date->getLongTimestamp());
 
-        $objDate = new Date(12345678);
-        self::assertEquals($objDate->getLongTimestamp(), 19700523222118);
+        $date = new Date(12345678);
+        self::assertEquals(19700523222118, $date->getLongTimestamp());
 
-        $objDate = new Date('12345678');
-        self::assertEquals($objDate->getLongTimestamp(), 19700523222118);
+        $date = new Date('12345678');
+        self::assertEquals(19700523222118, $date->getLongTimestamp());
 
-        $objDate = new Date('12345678');
-        $objDate2 = new Date($objDate);
-        self::assertEquals($objDate2->getLongTimestamp(), $objDate->getLongTimestamp());
+        $date = new Date('12345678');
+        $date2 = new Date($date);
+        self::assertEquals($date2->getLongTimestamp(), $date->getLongTimestamp());
     }
 
     public function testNextMonth(): void
     {
-        $objDate = new Date(20130101000000);
-        $objDate->setNextMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130201000000);
+        $date = new Date(20130101000000);
+        $date->setNextMonth();
+        self::assertEquals(20130201000000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130115120000);
-        $objDate->setNextMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130215120000);
+        $date = new Date(20130115120000);
+        $date->setNextMonth();
+        self::assertEquals(20130215120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130131120000);
-        $objDate->setNextMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130228120000);
+        $date = new Date(20130131120000);
+        $date->setNextMonth();
+        self::assertEquals(20130228120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130228120000);
-        $objDate->setNextMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130328120000);
+        $date = new Date(20130228120000);
+        $date->setNextMonth();
+        self::assertEquals(20130328120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130331120000);
-        $objDate->setNextMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130430120000);
+        $date = new Date(20130331120000);
+        $date->setNextMonth();
+        self::assertEquals(20130430120000, $date->getLongTimestamp());
     }
 
     public function testPreviousMonth(): void
     {
-        $objDate = new Date(20130101120000);
-        $objDate->setPreviousMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20121201120000);
+        $date = new Date(20130101120000);
+        $date->setPreviousMonth();
+        self::assertEquals(20121201120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130430120000);
-        $objDate->setPreviousMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130330120000);
+        $date = new Date(20130430120000);
+        $date->setPreviousMonth();
+        self::assertEquals(20130330120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130331120000);
-        $objDate->setPreviousMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130228120000);
+        $date = new Date(20130331120000);
+        $date->setPreviousMonth();
+        self::assertEquals(20130228120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20130831120000);
-        $objDate->setPreviousMonth();
-        self::assertEquals($objDate->getLongTimestamp(), 20130731120000);
+        $date = new Date(20130831120000);
+        $date->setPreviousMonth();
+        self::assertEquals(20130731120000, $date->getLongTimestamp());
     }
 
     public function testPreviousQuarter(): void
@@ -158,52 +161,52 @@ class DateTest extends TestCase
 
     public function testNextWeek(): void
     {
-        $objDate = new Date(20130115120000);
-        $objDate->setNextWeek();
-        self::assertEquals($objDate->getLongTimestamp(), 20130122120000);
+        $date = new Date(20130115120000);
+        $date->setNextWeek();
+        self::assertEquals(20130122120000, $date->getLongTimestamp());
     }
 
     public function testPreviousWeek(): void
     {
-        $objDate = new Date(20130122120000);
-        $objDate->setPreviousWeek();
-        self::assertEquals($objDate->getLongTimestamp(), 20130115120000);
+        $date = new Date(20130122120000);
+        $date->setPreviousWeek();
+        self::assertEquals(20130115120000, $date->getLongTimestamp());
     }
 
     public function testNextYear(): void
     {
-        $objDate = new Date(20130115120000);
-        $objDate->setNextYear();
-        self::assertEquals($objDate->getLongTimestamp(), 20140115120000);
+        $date = new Date(20130115120000);
+        $date->setNextYear();
+        self::assertEquals(20140115120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20150531120000);
-        $objDate->setNextYear();
-        self::assertEquals($objDate->getLongTimestamp(), 20160531120000);
+        $date = new Date(20150531120000);
+        $date->setNextYear();
+        self::assertEquals(20160531120000, $date->getLongTimestamp());
     }
 
     public function testPreviousYear(): void
     {
-        $objDate = new Date(20130122120000);
-        $objDate->setPreviousYear();
-        self::assertEquals($objDate->getLongTimestamp(), 20120122120000);
+        $date = new Date(20130122120000);
+        $date->setPreviousYear();
+        self::assertEquals(20120122120000, $date->getLongTimestamp());
 
-        $objDate = new Date(20150531120000);
-        $objDate->setPreviousYear();
-        self::assertEquals($objDate->getLongTimestamp(), 20140531120000);
+        $date = new Date(20150531120000);
+        $date->setPreviousYear();
+        self::assertEquals(20140531120000, $date->getLongTimestamp());
     }
 
     public function testSetEndOfDay(): void
     {
-        $objDate = new Date(20150901133737);
-        $objDate->setEndOfDay();
-        self::assertEquals($objDate->getLongTimestamp(), 20150901235959);
+        $date = new Date(20150901133737);
+        $date->setEndOfDay();
+        self::assertEquals(20150901235959, $date->getLongTimestamp());
     }
 
     public function testSetBeginningOfDay(): void
     {
-        $objDate = new Date(20150901133737);
-        $objDate->setBeginningOfDay();
-        self::assertEquals($objDate->getLongTimestamp(), 20150901000000);
+        $date = new Date(20150901133737);
+        $date->setBeginningOfDay();
+        self::assertEquals(20150901000000, $date->getLongTimestamp());
     }
 
     #[DataProvider('isGreaterProvider')]
@@ -272,7 +275,7 @@ class DateTest extends TestCase
     }
 
     #[DataProvider('dateDataProvider')]
-    final public function testGetters(string $timestamp, int $year, int $month, int $day, int $hour, int $minutes, int $seconds): void
+    public function testGetters(string $timestamp, int $year, int $month, int $day, int $hour, int $minutes, int $seconds): void
     {
         $date = new Date($timestamp);
 
@@ -282,5 +285,27 @@ class DateTest extends TestCase
         self::assertEquals($hour, $date->getHour());
         self::assertEquals($minutes, $date->getMinute());
         self::assertEquals($seconds, $date->getSecond());
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function testJsonSerialize(): void
+    {
+        $date = new Date();
+
+        self::assertSame(json_encode($date, JSON_THROW_ON_ERROR), json_encode($date->getLongTimestamp(), JSON_THROW_ON_ERROR));
+    }
+
+    public function testToString(): void
+    {
+        $date = new Date();
+
+        self::assertIsString($date->__toString());
+    }
+
+    public function testNullDateCheck(): void
+    {
+        self::assertFalse(Date::isDateValue(null));
     }
 }
