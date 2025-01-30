@@ -6,15 +6,16 @@ namespace Artemeon\Support\Date;
 
 use Artemeon\Support\Exception\InvalidTimestampFormatException;
 use DateInterval;
+use DateInvalidOperationException;
 use DateTime;
 use DateTimeInterface;
 use JetBrains\PhpStorm\Deprecated;
 
-final class Date implements DateInterface
+class Date implements DateInterface
 {
-    public const DATE_COMPARE_GREATER_THAN = 1;
-    public const DATE_COMPARE_EQUALS = 0;
-    public const DATE_COMPARE_LESSER_THAN = -1;
+    public const int DATE_COMPARE_GREATER_THAN = 1;
+    public const int DATE_COMPARE_EQUALS = 0;
+    public const int DATE_COMPARE_LESSER_THAN = -1;
 
     private string $strParseFormat = 'YmdHis';
     private string $longTimestamp = '';
@@ -25,7 +26,7 @@ final class Date implements DateInterface
      */
     public function __construct(mixed $longInitValue = '')
     {
-        if ($longInitValue instanceof Date) {
+        if ($longInitValue instanceof self) {
             $longInitValue = $longInitValue->getLongTimestamp();
         }
 
@@ -72,7 +73,7 @@ final class Date implements DateInterface
     }
 
     /**
-     * Returns the current Date objects as php's DateTime instance.
+     * Returns the current Date objects as PHP's DateTime instance.
      *
      * @throw InvalidTimestampFormatException
      */
@@ -104,7 +105,7 @@ final class Date implements DateInterface
      */
     public static function getCurrentTimestamp(): int
     {
-        return (int) date('YmdHis');
+        return (int) new Date()->toDateTime()->format('YmdHis');
     }
 
     public static function forBeginOfDay(): self
@@ -125,7 +126,7 @@ final class Date implements DateInterface
 
     /**
      * Allows to init the current class with an 32Bit int value representing the seconds since 1970.
-     * PHPs' time() returns 32Bit ints, too.
+     * PHPs' time() returns 32Bit integers, too.
      */
     public function setTimeInOldStyle(int | string $intTimestamp): static
     {
@@ -138,6 +139,7 @@ final class Date implements DateInterface
     /**
      * Converts the current long-timestamp to an old-fashioned int-timestamp (seconds since 1970).
      */
+    #[Deprecated(replacement: '%class%->getTimestamp()')]
     public function getTimeInOldStyle(): int
     {
         return (int) mktime($this->getHour(), $this->getMinute(), $this->getSecond(), $this->getMonth(), $this->getDay(), $this->getYear());
@@ -157,7 +159,7 @@ final class Date implements DateInterface
      */
     public function getIntDayOfWeek(): int
     {
-        return (int) date('w', $this->getTimeInOldStyle());
+        return (int) $this->toDateTime()->format('w');
     }
 
     /**
@@ -165,12 +167,14 @@ final class Date implements DateInterface
      */
     public function getWeekOfYear(): int
     {
-        return (int) date('W', $this->getTimeInOldStyle());
+        return (int) $this->toDateTime()->format('W');
     }
 
     /**
      * Sets the current day to the previous day.
      * Includes the handling of month / year shifts.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setPreviousDay(): self
     {
@@ -190,6 +194,8 @@ final class Date implements DateInterface
      * Shifts the current month into the future by one.
      * If the current month has 31 days, the next one only 30, the
      * logic will remain at 30.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setNextMonth(): static
     {
@@ -197,11 +203,11 @@ final class Date implements DateInterface
 
         $this->setNextDay();
         $intDaysAdded = 1;
-        while ($this->getIntDay() !== $objSourceDate->getIntDay()) {
+        while ($this->getDay() !== $objSourceDate->getDay()) {
             $this->setNextDay();
             $intDaysAdded++;
 
-            // if we skip a month border, roll back until the previous months last day
+            // if we skip a month border, roll back until the previous months last day.
             if ($intDaysAdded > 31) {
                 $this->setIntDay(1);
                 $this->setPreviousDay();
@@ -211,9 +217,9 @@ final class Date implements DateInterface
             }
         }
 
-        $this->setIntHour($objSourceDate->getIntHour());
-        $this->setIntMin($objSourceDate->getIntMin());
-        $this->setIntSec($objSourceDate->getIntSec());
+        $this->setIntHour($objSourceDate->getHour());
+        $this->setIntMin($objSourceDate->getMinute());
+        $this->setIntSec($objSourceDate->getSecond());
 
         return $this;
     }
@@ -222,6 +228,8 @@ final class Date implements DateInterface
      * Shifts the current month into the past by one.
      * If the current month has 31 days, the previous one only 30, the
      * logic will remain at 30.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setPreviousMonth(): static
     {
@@ -229,11 +237,11 @@ final class Date implements DateInterface
 
         $this->setPreviousDay();
         $intDaysSubtracted = 1;
-        while ($this->getIntDay() !== $objSourceDate->getIntDay()) {
+        while ($this->getDay() !== $objSourceDate->getDay()) {
             $this->setPreviousDay();
             $intDaysSubtracted++;
 
-            // if we skip a month border, roll back until the next months last day
+            // if we skip a month border, roll back until the next months last day.
             if ($intDaysSubtracted > 31) {
                 $this->setNextMonth();
                 $this->setIntDay(1);
@@ -244,16 +252,19 @@ final class Date implements DateInterface
             }
         }
 
-        $this->setIntHour($objSourceDate->getIntHour());
-        $this->setIntMin($objSourceDate->getIntMin());
-        $this->setIntSec($objSourceDate->getIntSec());
+        $this->setIntHour($objSourceDate->getHour());
+        $this->setIntMin($objSourceDate->getMinute());
+        $this->setIntSec($objSourceDate->getSecond());
 
         return $this;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function setPreviousQuarter(): self
     {
-        $currentDay = $this->getIntDay();
+        $currentDay = $this->getDay();
         $this->setIntDay(1);
         for ($i = 0; $i < 3; $i++) {
             $this->setPreviousMonth();
@@ -263,9 +274,12 @@ final class Date implements DateInterface
         return $this;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function setPreviousHalfYear(): self
     {
-        $currentDay = $this->getIntDay();
+        $currentDay = $this->getDay();
         $this->setIntDay(1);
         for ($i = 0; $i < 6; $i++) {
             $this->setPreviousMonth();
@@ -277,10 +291,12 @@ final class Date implements DateInterface
 
     /**
      * Shifts the current year into the past by one.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setPreviousYear(): static
     {
-        $intCurrentDay = $this->getIntDay();
+        $intCurrentDay = $this->getDay();
         $this->setIntDay(1);
         for ($intI = 0; $intI < 12; $intI++) {
             $this->setPreviousMonth();
@@ -292,10 +308,12 @@ final class Date implements DateInterface
 
     /**
      * Shifts the current year into the future by one.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setNextYear(): static
     {
-        $intCurrentDay = $this->getIntDay();
+        $intCurrentDay = $this->getDay();
         $this->setIntDay(1);
         for ($intI = 0; $intI < 12; $intI++) {
             $this->setNextMonth();
@@ -315,6 +333,8 @@ final class Date implements DateInterface
 
     /**
      * Shifts the current date one week into the future, so seven days.
+     *
+     * @throws DateInvalidOperationException
      */
     public function setPreviousWeek(): self
     {
@@ -323,14 +343,14 @@ final class Date implements DateInterface
 
     public function setNextSecond(): self
     {
-        $this->setTimeInOldStyle($this->getTimeInOldStyle() + 1);
+        $this->setTimeInOldStyle($this->getTimestamp() + 1);
 
         return $this;
     }
 
     public function setPreviousSecond(): self
     {
-        $this->setTimeInOldStyle($this->getTimeInOldStyle() - 1);
+        $this->setTimeInOldStyle($this->getTimestamp() - 1);
 
         return $this;
     }
@@ -456,7 +476,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getYear() instead.', replacement: '%class%->getYear()')]
     public function getIntYear(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 0, 4);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getYear(): int
@@ -472,7 +494,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getYear() instead.', replacement: '%class%->getYear()')]
     public function getIntMonth(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 4, 2);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getMonth(): int
@@ -488,7 +512,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getDay() instead.', replacement: '%class%->getDay()')]
     public function getIntDay(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 6, 2);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getDay(): int
@@ -504,7 +530,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getHour() instead.', replacement: '%class%->getHour()')]
     public function getIntHour(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 8, 2);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getHour(): int
@@ -520,7 +548,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getMinute() instead.', replacement: '%class%->getMinute()')]
     public function getIntMin(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 10, 2);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getMinute(): int
@@ -536,7 +566,9 @@ final class Date implements DateInterface
     #[Deprecated(reason: 'Use Date::getSecond() instead.', replacement: '%class%->getSecond()')]
     public function getIntSec(): string
     {
+        // @codeCoverageIgnoreStart
         return substr($this->longTimestamp, 12, 2);
+        // @codeCoverageIgnoreEnd
     }
 
     public function getSecond(): int
@@ -545,7 +577,7 @@ final class Date implements DateInterface
     }
 
     /**
-     * Get the timstamp as a long value.
+     * Get the timestamp as a long value.
      */
     public function getLongTimestamp(): string
     {
@@ -580,9 +612,9 @@ final class Date implements DateInterface
     }
 
     /**
-     * returns 0 if dates on either side are equal
-     * returns 1 if the current date is greater
-     * returns -1 if the other date is greater.
+     * Returns 0 if dates on either side are equal.
+     * Returns 1 if the current date is greater.
+     * Returns -1 if the other date is greater.
      */
     public function compareTo(DateInterface $otherDate): int
     {
@@ -618,6 +650,7 @@ final class Date implements DateInterface
 
     /**
      * @throws InvalidTimestampFormatException
+     * @throws DateInvalidOperationException
      */
     public function subtractInterval(DateInterval $dateInterval): self
     {
@@ -658,6 +691,9 @@ final class Date implements DateInterface
         return $this->toDateTime()->getTimestamp();
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function withPreviousDay(): DateInterface
     {
         $me = clone $this;
@@ -674,6 +710,9 @@ final class Date implements DateInterface
         return $me;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function withPreviousMonth(): DateInterface
     {
         $me = clone $this;
@@ -682,6 +721,9 @@ final class Date implements DateInterface
         return $me;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function withNextMonth(): DateInterface
     {
         $me = clone $this;
@@ -690,6 +732,9 @@ final class Date implements DateInterface
         return $me;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function withPreviousYear(): DateInterface
     {
         $me = clone $this;
@@ -698,6 +743,9 @@ final class Date implements DateInterface
         return $me;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function withNextYear(): DateInterface
     {
         $me = clone $this;
@@ -706,6 +754,9 @@ final class Date implements DateInterface
         return $me;
     }
 
+    /**
+     * @throws DateInvalidOperationException
+     */
     public function sub(DateInterval $interval): DateInterface
     {
         $me = clone $this;
