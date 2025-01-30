@@ -9,9 +9,9 @@ interface LinkInterface
     /**
      * @param array<string, mixed> $parameters
      */
-    public function withParameters(array $parameters): static;
+    public function withParameters(array $parameters): self;
 
-    public function withParameter(string $key, mixed $value): static;
+    public function withParameter(string $key, mixed $value): self;
 
     /**
      * @return array<string, mixed>
