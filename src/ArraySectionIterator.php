@@ -169,7 +169,7 @@ class ArraySectionIterator extends ArrayIterator implements ArrayAccess, Countab
             'totalEntries' => $this->getTotalItems(),
             'itemsPerPage' => $this->getPerPage(),
             'page' => $this->getPage(),
-            'entries' => iterator_to_array($this),
+            'entries' => $this->getSection(),
         ];
     }
 }
