@@ -27,7 +27,7 @@
     "require": {
         "php": ">=8.4",
         "ext-mbstring": "*",
-        "illuminate/support": "^11.14.0",
+        "illuminate/support": "^11.14.0|^12.16.0",
         "jetbrains/phpstorm-attributes": "^1.1",
         "nesbot/carbon": "^3.8.4"
     },
