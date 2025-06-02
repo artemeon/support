@@ -1,10 +1,11 @@
 <?php
 
-namespace Artemeon\Support\Tests;
+namespace Artemeon\Support\Tests\Unit;
 
 use Artemeon\Support\Date\Date;
 use Artemeon\Support\Date\DateInterface;
 use Artemeon\Support\StringUtil;
+use Artemeon\Support\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
