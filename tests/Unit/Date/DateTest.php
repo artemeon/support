@@ -16,6 +16,32 @@ use ReflectionClass;
  */
 final class DateTest extends TestCase
 {
+    public function testAddInterval(): void
+    {
+        $date = new Date('99991231235959');
+        $date->setNextDay();
+        self::assertEquals($date->getLongTimestamp(), '99991231235959');
+
+        $date = new Date('99991229235959');
+        $date->setNextDay();
+        self::assertEquals($date->getLongTimestamp(), '99991230235959');
+    }
+
+    public function testRemoveInterval(): void
+    {
+        $date = new Date('99991231235959');
+        $date->setPreviousDay();
+        self::assertEquals($date->getLongTimestamp(), '99991230235959');
+
+        $date = new Date('00000101000000');
+        $date->setPreviousDay();
+        self::assertEquals($date->getLongTimestamp(), '00000000000000');
+
+        $date = new Date('00000100120000');
+        $date->setPreviousDay();
+        self::assertEquals($date->getLongTimestamp(), '00000000000000');
+    }
+
     public function testTimezoneShifts(): void
     {
         $date = new Date('20141026000000');
@@ -303,7 +329,7 @@ final class DateTest extends TestCase
     {
         return [
             'null' => [null, false],
-            'int' => [1, true],
+            'int' => [1, false],
             'alpha_string' => ['foo', false],
             'alpha_numeric_string' => ['foo123', false],
             'numeric_string' => ['123', false],
