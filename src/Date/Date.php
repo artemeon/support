@@ -61,7 +61,7 @@ class Date implements DateInterface
      */
     public static function isDateValue(int | string | \Stringable | null $longValue): bool
     {
-        return StringUtil::matches($longValue, '([0-9]){14}') !== false;
+        return StringUtil::isMatch('/^([0-9]){14}$/', (string) $longValue);
     }
 
     /**

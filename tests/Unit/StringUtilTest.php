@@ -11,8 +11,44 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * @internal
  */
-class StringUtilTest extends TestCase
+final class StringUtilTest extends TestCase
 {
+    #[DataProvider('indexOfProvider')]
+    public function testIndexOf(int $expected, string $haystack, string $needle, bool $caseSensitive): void
+    {
+        self::assertSame($expected, StringUtil::indexOf($haystack, $needle, $caseSensitive));
+    }
+
+    /**
+     * @return array{int,string,string,bool}[]
+     */
+    public static function indexOfProvider(): array
+    {
+        return [
+            [0, 'foobar barfoo', 'foobar', true],
+            [7, 'foobar barfoo', 'barfoo', true],
+            [7, 'FOOBAR foobar barfoo', 'foobar', true],
+            [0, 'FOOBAR foobar barfoo', 'foobar', false],
+        ];
+    }
+
+    #[DataProvider('lastIndexOfProvider')]
+    public function testLastIndexOf(int $expected, string $haystack, string $needle, bool $caseSensitive): void
+    {
+        self::assertSame($expected, StringUtil::lastIndexOf($haystack, $needle, $caseSensitive));
+    }
+
+    /**
+     * @return array{int,string,string,bool}[]
+     */
+    public static function lastIndexOfProvider(): array
+    {
+        return [
+            [7, 'foobar foobar barfoo', 'foobar', true],
+            [7, 'foobar FOOBAR barfoo', 'foobar', false],
+        ];
+    }
+
     #[DataProvider('equalsProvider')]
     public function testEquals(string $strLeft, string $strRight): void
     {
@@ -47,22 +83,63 @@ class StringUtilTest extends TestCase
         ];
     }
 
-    public function testStrToDate(): void
+    #[DataProvider('limitProvider')]
+    public function testLimit(string $expected, string $input, int $limit, string $end, bool $preserveWords): void
     {
-        $strString = '';
-        $objResult = StringUtil::toDate($strString);
+        self::assertSame($expected, StringUtil::limit($input, $limit, $end, $preserveWords));
+    }
+
+    /**
+     * @return array{string,string,int,string,bool}[]
+     */
+    public static function limitProvider(): array
+    {
+        return [
+            ['Lorem ipsum dol…', 'Lorem ipsum dolor sit amet.', 15, '…', false],
+            ['Lorem ipsum…', 'Lorem ipsum dolor sit amet.', 15, '…', true],
+            ['Lorem ipsum', 'Lorem ipsum', 15, '…', true],
+        ];
+    }
+
+    public function testRemoveScriptTags(): void
+    {
+        self::assertSame('Hello  World', StringUtil::removeScriptTags('Hello <script>alert("Hello World");</script> World'));
+    }
+
+    #[DataProvider('br2nlProvider')]
+    public function testBr2nl(string $expected, string $input): void
+    {
+        self::assertSame($expected, StringUtil::br2nl($input));
+    }
+
+    /**
+     * @return array{string,string}[]
+     */
+    public static function br2nlProvider(): array
+    {
+        return [
+            ["\n", '<br>'],
+            ["\n", '<br/>'],
+            ["\n", '<br />'],
+        ];
+    }
+
+    public function testToDate(): void
+    {
+        $string = '';
+        $objResult = StringUtil::toDate($string);
         self::assertNull($objResult);
 
-        $strString = '0';
-        $objResult = StringUtil::toDate($strString);
+        $string = '0';
+        $objResult = StringUtil::toDate($string);
         self::assertInstanceOf(DateInterface::class, $objResult);
 
-        $strString = new Date();
-        $objResult = StringUtil::toDate($strString);
+        $string = new Date();
+        $objResult = StringUtil::toDate($string);
         self::assertInstanceOf(DateInterface::class, $objResult);
     }
 
-    public function testStrToInt(): void
+    public function testToInt(): void
     {
         $strString = '';
         $intResult = StringUtil::toInt($strString);
@@ -85,7 +162,7 @@ class StringUtilTest extends TestCase
         self::assertSame(-42, $intResult);
     }
 
-    public function testStrToFloat(): void
+    public function testToFloat(): void
     {
         $strString = '';
         $intResult = StringUtil::toFloat($strString);
@@ -124,7 +201,7 @@ class StringUtilTest extends TestCase
         self::assertSame(1.2345456, $intResult);
     }
 
-    public function testStrToArray(): void
+    public function testToArray(): void
     {
         // empty string
         $strString = '';
@@ -240,6 +317,23 @@ class StringUtilTest extends TestCase
             ['0', false],
             ['1', false],
             ['foo', false],
+        ];
+    }
+
+    #[DataProvider('xmlSafeStringProvider')]
+    public function testXmlSafeString(string $expected, ?string $input): void
+    {
+        self::assertSame($expected, StringUtil::xmlSafeString($input));
+    }
+
+    /**
+     * @return array{string,string|null}[]
+     */
+    public static function xmlSafeStringProvider(): array
+    {
+        return [
+            ['&amp;&lt;&gt;', '&<>'],
+            ['', null],
         ];
     }
 }

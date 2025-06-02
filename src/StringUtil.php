@@ -5,31 +5,35 @@ namespace Artemeon\Support;
 use Artemeon\Support\Date\Date;
 use Artemeon\Support\Date\DateInterface;
 use Illuminate\Support\Str;
-use Stringable;
 
 /**
  * Util class for processing strings.
  */
 class StringUtil extends Str
 {
+    public static function of(mixed $string): Stringable
+    {
+        return new Stringable($string);
+    }
+
     /**
      * Returns the index within the haystack of the first occurrence of the specified needle.
      * Returns false if the value is not found.
      */
-    public static function indexOf(string | Stringable $haystack, string $needle, bool $caseSensitive = true): false | int
+    public static function indexOf(string $haystack, string $needle, bool $caseSensitive = true): bool | int
     {
         if ($caseSensitive) {
-            return mb_strpos((string) $haystack, $needle);
+            return mb_strpos($haystack, $needle);
         }
 
-        return mb_stripos((string) $haystack, $needle);
+        return mb_stripos($haystack, $needle);
     }
 
     /**
      * Returns the index within the haystack of the last occurrence of the specified needle.
      * Returns false if the needle is not found.
      */
-    public static function lastIndexOf(string | Stringable $haystack, string $needle, bool $caseSensitive = true): false | int
+    public static function lastIndexOf(?string $haystack, string $needle, bool $caseSensitive = true): false | int
     {
         if ($caseSensitive) {
             return mb_strrpos((string) $haystack, $needle);
@@ -41,38 +45,22 @@ class StringUtil extends Str
     /**
      * Returns whether two string are equal.
      */
-    public static function equals(string $left, string $right): bool
+    public static function equals(?string $left, ?string $right): bool
     {
-        return strcasecmp($left, $right) === 0;
+        return strcasecmp((string) $left, (string) $right) === 0;
     }
 
     /**
-     * Returns a new string that is a substring of the given string.
+     * Trim whitespaces (or other characters) from the beginning and end of a string.
      */
-    public static function substring(string | Stringable $string, int $index, ?int $length = null): string
-    {
-        if ($length === null) {
-            return mb_substr((string) $string, $index);
-        }
-
-        return mb_substr((string) $string, $index, $length);
-    }
-
     public static function trim(mixed $value, mixed $charlist = null): string
     {
-        if (is_string($value) || $value instanceof Stringable) {
-            return trim((string) $value);
-        }
-
-        return '';
+        return parent::trim((string) $value, $charlist);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public static function limit(mixed $value, mixed $limit = 100, mixed $end = '...', mixed $preserveWords = false): string
+    public static function limit(mixed $value, mixed $limit = 100, mixed $end = '…', mixed $preserveWords = false): string
     {
-        return parent::limit($value, $limit, $end);
+        return parent::limit($value, $limit, $end, $preserveWords);
     }
 
     /**
@@ -80,7 +68,7 @@ class StringUtil extends Str
      */
     public static function toInt(mixed $string): ?int
     {
-        if (! is_numeric($string)) {
+        if (!is_numeric($string)) {
             return null;
         }
 
@@ -92,7 +80,7 @@ class StringUtil extends Str
      */
     public static function toFloat(mixed $string): ?float
     {
-        if (! is_numeric($string)) {
+        if (!is_numeric($string)) {
             return null;
         }
 
@@ -105,19 +93,21 @@ class StringUtil extends Str
      * If $strString is null, [null] will be returned.
      * If delimiter is not set and $string is not an array, [$string] will be returned.
      *
-     * @param array<string|int>|string|null $string
+     * @param array<array-key, mixed> | string $string
      *
-     * @return array<string|int>|null
+     * @return array<array-key, mixed>|null
      */
-    public static function toArray(array | string | null $string, ?string $delimiter = ','): ?array
+    public static function toArray(array | string | null $string, string $delimiter = ','): ?array
     {
-        if (self::isNullOrEmpty($string)) {
+        if ($string === null) {
             return null;
         }
+
         if (is_array($string)) {
             return $string;
         }
-        if (is_string($string) && $delimiter !== null && $delimiter !== '') {
+
+        if ($string !== '' && $delimiter !== '') {
             return explode($delimiter, $string);
         }
 
@@ -127,11 +117,12 @@ class StringUtil extends Str
     /**
      * Converts a string to a Date.
      */
-    public static function toDate(mixed $string): ?DateInterface
+    public static function toDate(DateInterface | string | null $string): ?DateInterface
     {
         if ($string instanceof DateInterface) {
             return $string;
         }
+
         if (self::isNullOrEmpty($string)) {
             return null;
         }
@@ -140,39 +131,30 @@ class StringUtil extends Str
     }
 
     /**
-     * Perform a global regular expression match on a given string.
+     * Encodes a string, so it can be used in a HTML attribute as javascript string.
      */
-    public static function matches(int | string | Stringable | null $strString, string $strPattern): bool
+    public static function jsSafeString(string | \Stringable $string): string
     {
-        return mb_ereg($strPattern, (string) $strString);
-    }
+        $jsonString = json_encode((string) $string, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        if (self::substr($jsonString, 0, 1) === '"') {
+            $jsonString = StringUtil::substr($jsonString, 1);
+        }
 
-    /**
-     * Encodes a string, so it can be used in a html attribute as javascript string.
-     */
-    public static function jsSafeString(string | Stringable $strString): string
-    {
-        $strJson = json_encode((string) $strString, JSON_UNESCAPED_UNICODE);
-        if ($strJson === false) {
-            $strJson = '';
+        if (self::substr($jsonString, -1) === '"') {
+            $jsonString = self::substr($jsonString, 0, -1);
         }
-        if (self::substring($strJson, 0, 1) === '"') {
-            $strJson = StringUtil::substring($strJson, 1);
-        }
-        if (self::substring($strJson, -1) === '"') {
-            $strJson = self::substring($strJson, 0, -1);
-        }
-        $strJson = addcslashes($strJson, "'");
 
-        return htmlspecialchars($strJson, ENT_QUOTES | ENT_HTML401);
+        $jsonString = addcslashes($jsonString, "'");
+
+        return htmlspecialchars($jsonString, ENT_QUOTES | ENT_HTML401);
     }
 
     /**
      * Removes script tags.
      */
-    public static function removeScriptTags(string | Stringable $string): ?string
+    public static function removeScriptTags(?string $string): string
     {
-        return preg_replace('~<script(.*)</script>~imUs', '', (string) $string); // remove script tags
+        return (string) preg_replace('~<script(.*)</script>~imUs', '', (string) $string);
     }
 
     /**
@@ -182,7 +164,7 @@ class StringUtil extends Str
      * easily reach this limit. Because of this we split up the string into specific chunks and then use the parse_str
      * method
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public static function parseUrlString(string $strParams): array
     {
@@ -201,9 +183,10 @@ class StringUtil extends Str
             $value = current($arr);
 
             if (is_array($value)) {
-                if (! isset($grouped[$key])) {
+                if (!isset($grouped[$key])) {
                     $grouped[$key] = [];
                 }
+
                 $grouped[$key][] = $strOneVal;
             } else {
                 $scalar[] = $strOneVal;
@@ -232,12 +215,8 @@ class StringUtil extends Str
      */
     public static function br2nl(string $string): string
     {
-        $return = StringUtil::replace(['<br />', '<br>'], PHP_EOL, $string);
-        if (is_string($return)) {
-            return $return;
-        }
-
-        return '';
+        /** @var string */
+        return self::replace(['<br />', '<br/>', '<br>'], PHP_EOL, $string);
     }
 
     public static function isNullOrEmpty(mixed $value): bool
@@ -249,17 +228,16 @@ class StringUtil extends Str
         return $value === null || $value === '';
     }
 
-    public static function getShortText(string $text, int $maxLength = 250): string
+    /**
+     * Makes a string safe for xml-outputs.
+     */
+    public static function xmlSafeString(?string $string): string
     {
-        if (strlen($text) <= $maxLength) {
-            return $text;
+        if ($string === null) {
+            return '';
         }
 
-        $pos = strpos(wordwrap($text, $maxLength), "\n");
-        if ($pos !== false) {
-            return substr($text, 0, $pos) . '...';
-        }
-
-        return $text;
+        /** @var string */
+        return static::replace(['&', '<', '>'], ['&amp;', '&lt;', '&gt;'], html_entity_decode($string, ENT_COMPAT, 'UTF-8'));
     }
 }

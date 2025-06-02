@@ -9,6 +9,7 @@ parameters:
         - ./tests
     checkUninitializedProperties: true
     # checkImplicitMixed: true
+    treatPhpDocTypesAsCertain: false
     checkBenevolentUnionTypes: true
     rememberPossiblyImpureFunctionValues: false
     reportPossiblyNonexistentGeneralArrayOffset: true
