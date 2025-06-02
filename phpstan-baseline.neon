@@ -99,6 +99,24 @@ parameters:
 		-
 			message: '#^Call to method toBe\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
 			identifier: method.internalClass
+			count: 8
+			path: tests/Unit/StringableTest.php
+
+		-
+			message: '#^Call to method toBeTrue\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 3
+			path: tests/Unit/StringableTest.php
+
+		-
+			message: '#^Parameter \#1 \$string of static method Artemeon\\Support\\StringUtil\:\:of\(\) expects string, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/StringableTest.php
+
+		-
+			message: '#^Call to method toBe\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
 			count: 1
 			path: tests/Unit/TimerTest.php
 

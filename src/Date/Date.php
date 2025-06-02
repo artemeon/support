@@ -5,14 +5,22 @@ declare(strict_types=1);
 namespace Artemeon\Support\Date;
 
 use Artemeon\Support\Exception\InvalidTimestampFormatException;
+use Artemeon\Support\StringUtil;
 use DateInterval;
 use DateInvalidOperationException;
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
+use InvalidArgumentException;
 use JetBrains\PhpStorm\Deprecated;
 
 class Date implements DateInterface
 {
+    public const int MIN_YEAR = 1000;
+    public const int MAX_YEAR = 9999;
+    public const string MIN_TIMESTAMP = '00000000000000';
+    public const string MAX_TIMESTAMP = '99991231235959';
+
     public const int DATE_COMPARE_GREATER_THAN = 1;
     public const int DATE_COMPARE_EQUALS = 0;
     public const int DATE_COMPARE_LESSER_THAN = -1;
@@ -31,8 +39,8 @@ class Date implements DateInterface
         }
 
         if ($longInitValue === '0' || $longInitValue === 0) {
-            $this->setLongTimestamp('00000000000000');
-        } elseif ($longInitValue === null || $longInitValue === '') {
+            $this->setLongTimestamp(self::MIN_TIMESTAMP);
+        } elseif ($longInitValue === '' || $longInitValue === null) {
             $this->setTimeInOldStyle(time());
         } elseif (is_int($longInitValue) || is_string($longInitValue)) {
             if (strlen('' . $longInitValue) === 14) {
@@ -51,17 +59,9 @@ class Date implements DateInterface
     /**
      * Validates if the passed param is a valid date timestamp.
      */
-    public static function isDateValue(int | string | null $longValue): bool
+    public static function isDateValue(int | string | \Stringable | null $longValue): bool
     {
-        if ($longValue === null) {
-            return false;
-        }
-
-        if (is_int($longValue)) {
-            return true;
-        }
-
-        return strlen($longValue) === 14 && ctype_digit($longValue);
+        return StringUtil::isMatch('/^([0-9]){14}$/', (string) $longValue);
     }
 
     /**
@@ -105,7 +105,7 @@ class Date implements DateInterface
      */
     public static function getCurrentTimestamp(): int
     {
-        return (int) new Date()->toDateTime()->format('YmdHis');
+        return (int) date('YmdHis');
     }
 
     public static function forBeginOfDay(): self
@@ -131,7 +131,12 @@ class Date implements DateInterface
     public function setTimeInOldStyle(int | string $intTimestamp): static
     {
         // parse timestamp in order to get schema.
-        $this->longTimestamp = date($this->strParseFormat, (int) $intTimestamp);
+        $timestamp = date($this->strParseFormat, (int) $intTimestamp);
+        if (strlen($timestamp) === 14) {
+            $this->longTimestamp = $timestamp;
+        } else {
+            $this->longTimestamp = self::MIN_TIMESTAMP;
+        }
 
         return $this;
     }
@@ -380,10 +385,10 @@ class Date implements DateInterface
             return $this;
         }
 
-        if (strlen('' . $intYear) === 2) {
+        if (StringUtil::length('' . $intYear) === 2) {
             $intYear = '20' . $intYear;
         }
-        if (strlen('' . $intYear) === 1) {
+        if (StringUtil::length('' . $intYear) === 1) {
             $intYear = '200' . $intYear;
         }
 
@@ -483,7 +488,7 @@ class Date implements DateInterface
 
     public function getYear(): int
     {
-        return (int) substr($this->longTimestamp, 0, 4);
+        return (int) StringUtil::of($this->longTimestamp)->substr(0, 4)->value();
     }
 
     /**
@@ -501,7 +506,7 @@ class Date implements DateInterface
 
     public function getMonth(): int
     {
-        return (int) substr($this->longTimestamp, 4, 2);
+        return (int) StringUtil::of($this->longTimestamp)->substr(4, 2)->value();
     }
 
     /**
@@ -519,7 +524,7 @@ class Date implements DateInterface
 
     public function getDay(): int
     {
-        return (int) substr($this->longTimestamp, 6, 2);
+        return (int) StringUtil::of($this->longTimestamp)->substr(6, 2)->value();
     }
 
     /**
@@ -537,7 +542,7 @@ class Date implements DateInterface
 
     public function getHour(): int
     {
-        return (int) substr($this->longTimestamp, 8, 2);
+        return (int) StringUtil::of($this->longTimestamp)->substr(8, 2)->value();
     }
 
     /**
@@ -555,7 +560,7 @@ class Date implements DateInterface
 
     public function getMinute(): int
     {
-        return (int) substr($this->longTimestamp, 10, 2);
+        return (int) StringUtil::of($this->longTimestamp)->substr(10, 2)->value();
     }
 
     /**
@@ -573,7 +578,7 @@ class Date implements DateInterface
 
     public function getSecond(): int
     {
-        return (int) substr($this->longTimestamp, 12, 2);
+        return (int) StringUtil::of($this->longTimestamp)->substr(12, 2)->value();
     }
 
     /**
@@ -636,6 +641,21 @@ class Date implements DateInterface
         return $this->compareTo($otherDate) === self::DATE_COMPARE_EQUALS;
     }
 
+    public function isFuture(): bool
+    {
+        return $this->isGreater(new Date());
+    }
+
+    public function isPast(): bool
+    {
+        return $this->isLower(new Date());
+    }
+
+    public function isZero(): bool
+    {
+        return $this->longTimestamp === self::MIN_TIMESTAMP;
+    }
+
     /**
      * @throws InvalidTimestampFormatException
      */
@@ -643,7 +663,17 @@ class Date implements DateInterface
     {
         $dateTime = $this->toDateTime();
         $dateTime->add($dateInterval);
-        $this->setTimeInOldStyle($dateTime->getTimestamp());
+
+        $timeStamp = $dateTime->format($this->strParseFormat);
+
+        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) {
+            $timeStamp = self::MAX_TIMESTAMP;
+        }
+        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) {
+            $timeStamp = self::MIN_TIMESTAMP;
+        }
+
+        $this->longTimestamp = $timeStamp;
 
         return $this;
     }
@@ -656,9 +686,29 @@ class Date implements DateInterface
     {
         $dateTime = $this->toDateTime();
         $dateTime->sub($dateInterval);
-        $this->setTimeInOldStyle($dateTime->getTimestamp());
+
+        $timeStamp = $dateTime->format($this->strParseFormat);
+
+        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) {
+            $timeStamp = self::MAX_TIMESTAMP;
+        }
+        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) {
+            $timeStamp = self::MIN_TIMESTAMP;
+        }
+
+        $this->longTimestamp = $timeStamp;
 
         return $this;
+    }
+
+    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): self
+    {
+        $dateTime = DateTime::createFromFormat($format, $datetime, $timezone);
+        if ($dateTime === false) {
+            throw new InvalidArgumentException('Provided an invalid format');
+        }
+
+        return self::fromDateTime($dateTime);
     }
 
     public function setDate(int $year, int $month, int $day): DateInterface
