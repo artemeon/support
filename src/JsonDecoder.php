@@ -9,26 +9,29 @@ use JsonException;
 
 final class JsonDecoder
 {
-    public static function decode(string $json, bool $assoc = true): mixed
+    public static function decode(string $json, bool $assoc = true, int $flags = 0): mixed
     {
         try {
-            return json_decode($json, $assoc, 512, JSON_THROW_ON_ERROR);
+            return json_decode($json, $assoc, 512, JSON_THROW_ON_ERROR | $flags);
         } catch (JsonException $exception) {
             throw InvalidJsonFormatException::wrappingException($exception);
         }
     }
 
-    public static function decodeSilently(string $json, bool $assoc = true): mixed
+    public static function decodeSilently(string $json, bool $assoc = true, int $flags = 0): mixed
     {
         try {
-            return self::decode($json, $assoc);
+            return self::decode($json, $assoc, $flags);
         } catch (InvalidJsonFormatException) {
             return null;
         }
     }
 
-    public static function validate(string $json): bool
+    /**
+     * @phpstan-param 0|JSON_INVALID_UTF8_IGNORE $flags
+     */
+    public static function validate(string $json, int $flags = 0): bool
     {
-        return json_validate($json);
+        return json_validate($json, 512, $flags);
     }
 }
