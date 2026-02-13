@@ -17,4 +17,18 @@ final class JsonDecoder
             throw InvalidJsonFormatException::wrappingException($exception);
         }
     }
+
+    public static function decodeSilently(string $json, bool $assoc = true): mixed
+    {
+        try {
+            return self::decode($json, $assoc);
+        } catch (InvalidJsonFormatException) {
+            return null;
+        }
+    }
+
+    public static function validate(string $json): bool
+    {
+        return json_validate($json);
+    }
 }

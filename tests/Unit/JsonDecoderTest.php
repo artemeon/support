@@ -22,3 +22,18 @@ it('should throw exception with invalid json', function (string $json): void {
 })
     ->with('invalid json')
     ->throws(InvalidJsonFormatException::class);
+
+it('should decode into null for invalid json', function (string $json): void {
+    expect(JsonDecoder::decodeSilently($json))->toBeNull();
+})
+    ->with('invalid json');
+
+it('should validate with valid json', function (string $json): void {
+    expect(JsonDecoder::validate($json))->toBeTrue();
+})
+    ->with('valid json');
+
+it('should validate with invalid json', function (string $json): void {
+    expect(JsonDecoder::validate($json))->toBeFalse();
+})
+    ->with('invalid json');
