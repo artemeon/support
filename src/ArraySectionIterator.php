@@ -97,7 +97,7 @@ class ArraySectionIterator extends ArrayIterator implements ArrayAccess, Countab
     }
 
     /**
-     * @param int | string | null $offset
+     * @param array-key $offset
      *
      * @return TValue | null
      */

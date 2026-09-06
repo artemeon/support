@@ -182,6 +182,10 @@ class StringUtil extends Str
             $key = key($arr);
             $value = current($arr);
 
+            if ($key === null) {
+                continue;
+            }
+
             if (is_array($value)) {
                 if (!isset($grouped[$key])) {
                     $grouped[$key] = [];
