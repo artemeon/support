@@ -76,6 +76,36 @@ parameters:
 			rawMessage: 'Call to method throws() of internal class Pest\PendingCalls\TestCall from outside its root namespace Pest.'
 			identifier: method.internalClass
 			count: 1
+			path: tests/Unit/JSONTest.php
+
+		-
+			message: '#^Call to method toBe\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 2
+			path: tests/Unit/JSONTest.php
+
+		-
+			message: '#^Call to method toBeFalse\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/Unit/JSONTest.php
+
+		-
+			message: '#^Call to method toBeNull\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/Unit/JSONTest.php
+
+		-
+			message: '#^Call to method toBeTrue\(\) of internal class Pest\\Mixins\\Expectation\<TValue\> from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: tests/Unit/JSONTest.php
+
+		-
+			message: '#^Call to method throws\(\) of internal class Pest\\PendingCalls\\TestCall from outside its root namespace Pest\.$#'
+			identifier: method.internalClass
+			count: 1
 			path: tests/Unit/JsonDecoderTest.php
 
 		-
