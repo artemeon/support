@@ -59,7 +59,11 @@ final class FullText
      */
     private function tokenize(float | int | string | null ...$parts): Collection
     {
-        $fullText = trim(implode(' ', Collection::make($parts)->map(static fn (mixed $part) => (string) $part)->toArray()));
+        $fullText = StringUtil::of(
+            Collection::make($parts)
+                ->map(static fn (float | int | string | null $part): string => StringUtil::trim((string) $part))
+                ->implode(' '),
+        )->trim()->value();
 
         return Collection::make(explode(' ', $fullText))
             ->filter(static fn (string $token): bool => (bool) preg_match('/[A-Z0-9]/ui', $token))
