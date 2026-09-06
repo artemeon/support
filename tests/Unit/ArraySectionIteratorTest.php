@@ -99,6 +99,15 @@ it('should set the offset', function (array $items, int $offset, ?int $oldItem, 
     [range(1, 30), 2, 3, 1337],
 ]);
 
+it('should not set the offset if the offset is null', function (): void {
+    $iterator = new ArraySectionIterator(100);
+    $iterator->setSection(range(1, 100));
+
+    $iterator->offsetSet(null, 1337);
+
+    expect($iterator->getSection())->toBe(range(1, 100));
+});
+
 it('should unset the offset', function (array $items, int $offset): void {
     $iterator = new ArraySectionIterator(count($items));
     $iterator->setSection($items);
