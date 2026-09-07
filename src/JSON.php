@@ -44,9 +44,9 @@ class JSON
     /**
      * @param int<1, 2147483647> $depth
      *
-     * @return array<array-key, mixed>
-     *
      * @throws JsonException
+     *
+     * @return array<array-key, mixed>
      */
     public static function decodeAsArray(#[Language('JSON')] string $json, int $depth = 512, int $flags = 0): array
     {
