@@ -31,6 +31,18 @@ class JSON
 
     /**
      * @param int<1, 2147483647> $depth
+     */
+    public static function decodeSilently(#[Language('JSON')] string $json, ?bool $associative = null, int $depth = 512, int $flags = 0): mixed
+    {
+        try {
+            return self::decode($json, $associative, $depth, $flags);
+        } catch (JsonException) {
+            return null;
+        }
+    }
+
+    /**
+     * @param int<1, 2147483647> $depth
      *
      * @return array<array-key, mixed>
      *
@@ -53,18 +65,6 @@ class JSON
         return is_object($decoded = self::decode($json, false, $depth, $flags))
             ? $decoded
             : throw new JsonException(sprintf('Input JSON %s is expected to be an object. Got %s instead.', $json, gettype($decoded)));
-    }
-
-    /**
-     * @param int<1, 2147483647> $depth
-     */
-    public static function decodeSilently(#[Language('JSON')] string $json, ?bool $associative = null, int $depth = 512, int $flags = 0): mixed
-    {
-        try {
-            return self::decode($json, $associative, $depth, $flags);
-        } catch (JsonException) {
-            return null;
-        }
     }
 
     /**
