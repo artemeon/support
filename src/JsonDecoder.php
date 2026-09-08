@@ -7,6 +7,9 @@ namespace Artemeon\Support;
 use Artemeon\Support\Exception\InvalidJsonFormatException;
 use JsonException;
 
+/**
+ * @deprecated Use {@see JSON} instead.
+ */
 final class JsonDecoder
 {
     public static function decode(string $json, bool $assoc = true, int $flags = 0): mixed
