@@ -8,6 +8,7 @@
         "test": "./vendor/bin/pest --parallel",
         "test:coverage": "XDEBUG_MODE=coverage composer test -- --coverage --min=97.4",
         "test:type-coverage": "composer test -- --type-coverage --min=100",
+        "test:mutate": "XDEBUG_MODE=coverage composer test -- --mutate --everything --covered-only --min=100",
         "phpstan": "./vendor/bin/phpstan --memory-limit=2G",
         "pint": "./vendor/bin/pint"
     },

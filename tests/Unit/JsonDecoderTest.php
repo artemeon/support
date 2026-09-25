@@ -37,3 +37,21 @@ it('should validate with invalid json', function (string $json): void {
     expect(JsonDecoder::validate($json))->toBeFalse();
 })
     ->with('invalid json');
+
+it('should decode up to a nesting depth of 511', function (): void {
+    expect(JsonDecoder::decode(str_repeat('[', 511) . str_repeat(']', 511)))->toBeArray()
+        ->and(JsonDecoder::validate(str_repeat('[', 511) . str_repeat(']', 511)))->toBeTrue();
+});
+
+it('should reject a nesting depth of 512', function (): void {
+    expect(JsonDecoder::decodeSilently(str_repeat('[', 512) . str_repeat(']', 512)))->toBeNull()
+        ->and(JsonDecoder::validate(str_repeat('[', 512) . str_repeat(']', 512)))->toBeFalse();
+});
+
+it('should wrap the JSON exception with code 0', function (): void {
+    $previous = new JsonException('Syntax error', 4);
+    $exception = InvalidJsonFormatException::wrappingException($previous);
+
+    expect($exception->getCode())->toBe(0)
+        ->and($exception->getPrevious())->toBe($previous);
+});

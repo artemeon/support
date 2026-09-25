@@ -46,7 +46,20 @@ final class StringUtilTest extends TestCase
         return [
             [7, 'foobar foobar barfoo', 'foobar', true],
             [7, 'foobar FOOBAR barfoo', 'foobar', false],
+            [0, 'aA', 'a', true],
         ];
+    }
+
+    public function testLastIndexOfNullHaystack(): void
+    {
+        self::assertFalse(StringUtil::lastIndexOf(null, 'a'));
+        self::assertFalse(StringUtil::lastIndexOf(null, 'a', false));
+    }
+
+    public function testEqualsTreatsNullAsEmptyString(): void
+    {
+        self::assertTrue(StringUtil::equals(null, ''));
+        self::assertTrue(StringUtil::equals('', null));
     }
 
     #[DataProvider('equalsProvider')]
@@ -101,6 +114,11 @@ final class StringUtilTest extends TestCase
         ];
     }
 
+    public function testRemoveScriptTagsFromNull(): void
+    {
+        self::assertSame('', StringUtil::removeScriptTags(null));
+    }
+
     public function testRemoveScriptTags(): void
     {
         self::assertSame('Hello  World', StringUtil::removeScriptTags('Hello <script>alert("Hello World");</script> World'));
@@ -136,7 +154,7 @@ final class StringUtilTest extends TestCase
 
         $string = new Date();
         $objResult = StringUtil::toDate($string);
-        self::assertInstanceOf(DateInterface::class, $objResult);
+        self::assertSame($string, $objResult);
     }
 
     public function testToInt(): void
@@ -295,7 +313,20 @@ final class StringUtilTest extends TestCase
             ['foo"bar', 'foo\&quot;bar'],
             ['foo\'bar', 'foo\&#039;bar'],
             ['foo' . "\n" . 'bar', 'foo\nbar'],
+            ['fööbar', 'fööbar'],
         ];
+    }
+
+    public function testJsSafeStringAcceptsStringable(): void
+    {
+        $stringable = new class () implements \Stringable {
+            public function __toString(): string
+            {
+                return 'foobar';
+            }
+        };
+
+        self::assertSame('foobar', StringUtil::jsSafeString($stringable));
     }
 
     #[DataProvider('isNullOrEmptyProvider')]
@@ -317,6 +348,7 @@ final class StringUtilTest extends TestCase
             ['0', false],
             ['1', false],
             ['foo', false],
+            ['  ', true],
         ];
     }
 
@@ -333,6 +365,7 @@ final class StringUtilTest extends TestCase
     {
         return [
             ['&amp;&lt;&gt;', '&<>'],
+            ['&amp;&lt;', '&amp;&lt;'],
             ['', null],
         ];
     }

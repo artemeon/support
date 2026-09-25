@@ -150,6 +150,16 @@ final class DateTest extends TestCase
         self::assertEquals(20130731120000, $date->getLongTimestamp());
     }
 
+    public function testNextMonthRestoresTimeShiftedByDstGap(): void
+    {
+        self::assertSame('20130430023000', new Date('20130330023000')->setNextMonth()->getLongTimestamp());
+    }
+
+    public function testPreviousMonthRestoresTimeShiftedByDstGap(): void
+    {
+        self::assertSame('20130330023000', new Date('20130430023000')->setPreviousMonth()->getLongTimestamp());
+    }
+
     public function testPreviousQuarter(): void
     {
         $date = new Date(20130101120000);
@@ -427,11 +437,13 @@ final class DateTest extends TestCase
             '2025-01-30' => [2025, 1, 30, 2025, 1, 30],
             '-1-01-30' => [-1, 1, 30, null, 1, 30],
             '2025-00-30' => [2025, 0, 30, 2025, null, 30],
+            '2025-12-30' => [2025, 12, 30, 2025, 12, 30],
             '2025-13-30' => [2025, 13, 30, 2025, null, 30],
             '2025-01-00' => [2025, 1, 0, 2025, 1, null],
             '2025-01-32' => [2025, 1, 32, 2025, 1, null],
             '25-01-30' => [25, 1, 30, 2025, 1, 30],
             '5-01-30' => [5, 1, 30, 2005, 1, 30],
+            '0-01-30' => [0, 1, 30, 2000, 1, 30],
         ];
     }
 
@@ -472,6 +484,11 @@ final class DateTest extends TestCase
         self::assertEquals($expectedHour ?? $date->getHour(), $modifiedDate->getHour());
         self::assertEquals($expectedMinutes ?? $date->getMinute(), $modifiedDate->getMinute());
         self::assertEquals($expectedSeconds ?? $date->getSecond(), $modifiedDate->getSecond());
+    }
+
+    public function testSetIntMinOnlyReplacesMinutes(): void
+    {
+        self::assertSame('20250130130537', new Date('20250130133737')->setIntMin(5)->getLongTimestamp());
     }
 
     public function testFromDateTime(): void

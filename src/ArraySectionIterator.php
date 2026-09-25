@@ -24,7 +24,7 @@ class ArraySectionIterator extends ArrayIterator implements ArrayAccess, Countab
 
     public function __construct(?int $totalItems = null)
     {
-        parent::__construct([]);
+        parent::__construct([]); // @pest-mutate-ignore: RemoveMethodCall
 
         $this->totalItems = $totalItems ?? 0;
     }

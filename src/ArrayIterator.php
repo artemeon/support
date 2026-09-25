@@ -110,7 +110,7 @@ class ArrayIterator implements Iterator
      */
     public function getForPage(int $page): array
     {
-        if ($page <= 0) {
+        if ($page <= 0) { // @pest-mutate-ignore: IncrementInteger
             $page = 1;
         }
 
@@ -118,16 +118,8 @@ class ArrayIterator implements Iterator
         $perPage = $this->getPerPage();
         $start = ($page * $perPage) - $perPage;
         $end = $perPage + $start - 1;
-        $totalItems = $this->getTotalItems();
 
-        if ($end > $totalItems) {
-            $end = $totalItems - 1;
-        }
-
-        for ($i = $start; $i <= $end; $i++) {
-            if (!$this->setCursor($i)) {
-                break;
-            }
+        for ($i = $start; $i <= $end && $this->setCursor($i); $i++) {
             $output[] = $this->current();
         }
 

@@ -18,3 +18,14 @@ it('should calculate relevance', function (string $input, string $firstQuery, st
 it('should return 1.0 when no query was provided', function (): void {
     expect(FullText::make('foo bar')->search(''))->toBe(1.0);
 });
+
+it('should score each match type', function (string $input, string $query, float $expected): void {
+    expect(FullText::make($input)->search($query))->toBe($expected);
+})->with([
+    'exact' => ['foo', 'foo', 16100.0],
+    'prefix' => ['foobar', 'foo', 6000.0],
+    'infix' => ['barfoo', 'foo', 1000.0],
+    'similar at threshold' => ['abcdy', 'abcdx', 80.0],
+    'similar below threshold' => ['abcdefghijklmnopqrs22222', 'abcdefghijklmnopqrs11111', 0.0],
+    'earlier tokens weigh double' => ['foo bar', 'foo bar', 48300.0],
+]);

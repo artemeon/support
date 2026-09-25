@@ -10,6 +10,29 @@ it('should construct', function (int $totalItems): void {
     expect($iterator->getTotalItems())->toBe($totalItems);
 })->with([[500], [1000]]);
 
+it('should default to zero total items', function (): void {
+    expect(new ArraySectionIterator()->getTotalItems())->toBe(0);
+});
+
+it('should default to the first page and rewind', function (): void {
+    $iterator = new ArraySectionIterator(10);
+    $iterator->setSection([1, 2]);
+    $iterator->next();
+    $iterator->setPage(null);
+
+    expect($iterator->getPage())->toBe(1)
+        ->and($iterator->key())->toBe(0);
+});
+
+it('should be invalid past the end of the section', function (): void {
+    $iterator = new ArraySectionIterator(2);
+    $iterator->setSection([1, 2]);
+    $iterator->next();
+    $iterator->next();
+
+    expect($iterator->valid())->toBeFalse();
+});
+
 it('should overwrite total items', function (int $initialItems, int $newItems): void {
     $iterator = new ArraySectionIterator($initialItems);
     $iterator->setTotalItems($newItems);
@@ -166,4 +189,5 @@ it('should be converted to JSON', function (array $items, int $totalItems, int $
     [range(1, 15), 15, 15, 1, 1],
     [range(1, 15), 30, 15, 2, 1],
     [range(11, 15), 20, 5, 4, 3],
+    [range(6, 10), 20, 5, 4, 2],
 ]);
