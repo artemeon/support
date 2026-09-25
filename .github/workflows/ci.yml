@@ -48,7 +48,7 @@ jobs:
       - name: Composer install
         run: composer install --no-interaction --no-ansi --no-progress
       - name: Run PEST (with mutation testing)
-        run: composer test:mutation
+        run: composer test:mutate
   pest-type-coverage:
     name: PEST - Type Coverage
     runs-on: ubuntu-latest
