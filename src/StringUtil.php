@@ -164,7 +164,7 @@ class StringUtil extends Str
      * easily reach this limit. Because of this we split up the string into specific chunks and then use the parse_str
      * method
      *
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     public static function parseUrlString(string $strParams): array
     {
