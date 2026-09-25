@@ -486,6 +486,11 @@ final class DateTest extends TestCase
         self::assertEquals($expectedSeconds ?? $date->getSecond(), $modifiedDate->getSecond());
     }
 
+    public function testSetIntHourOnlyReplacesHours(): void
+    {
+        self::assertSame('20250130053737', new Date('20250130133737')->setIntHour(5)->getLongTimestamp());
+    }
+
     public function testSetIntMinOnlyReplacesMinutes(): void
     {
         self::assertSame('20250130130537', new Date('20250130133737')->setIntMin(5)->getLongTimestamp());
