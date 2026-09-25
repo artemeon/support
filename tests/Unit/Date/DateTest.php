@@ -7,6 +7,7 @@ use Artemeon\Support\Exception\InvalidTimestampFormatException;
 use Carbon\Carbon;
 use DateInterval;
 use DateTime;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -563,5 +564,52 @@ final class DateTest extends TestCase
         $date = new Date()->add($interval);
 
         self::assertEquals($date->getDay(), Carbon::now()->add($interval)->day);
+    }
+
+    public function testSetTimeInOldStyleFallsBackToMinTimestampForYearsBeyond9999(): void
+    {
+        self::assertSame(Date::MIN_TIMESTAMP, new Date()->setTimeInOldStyle(300000000000)->getLongTimestamp());
+    }
+
+    public function testIsFutureAndIsPast(): void
+    {
+        self::assertTrue(new Date()->setNextDay()->isFuture());
+        self::assertFalse(new Date()->setPreviousDay()->isFuture());
+        self::assertTrue(new Date()->setPreviousDay()->isPast());
+        self::assertFalse(new Date()->setNextDay()->isPast());
+    }
+
+    public function testIsZero(): void
+    {
+        self::assertTrue(new Date(0)->isZero());
+        self::assertFalse(new Date()->isZero());
+    }
+
+    public function testAddIntervalClampsToMinTimestamp(): void
+    {
+        $interval = new DateInterval('P1Y');
+        $interval->invert = 1;
+
+        self::assertSame(Date::MIN_TIMESTAMP, new Date('00000101000000')->addInterval($interval)->getLongTimestamp());
+    }
+
+    public function testSubtractIntervalClampsToMaxTimestamp(): void
+    {
+        $interval = new DateInterval('P1Y');
+        $interval->invert = 1;
+
+        self::assertSame(Date::MAX_TIMESTAMP, new Date('99991231235959')->subtractInterval($interval)->getLongTimestamp());
+    }
+
+    public function testCreateFromFormat(): void
+    {
+        self::assertSame('20250130133700', Date::createFromFormat('Y-m-d H:i:s', '2025-01-30 13:37:00')->getLongTimestamp());
+    }
+
+    public function testCreateFromFormatThrowsOnInvalidInput(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        Date::createFromFormat('Y-m-d', 'foo');
     }
 }
