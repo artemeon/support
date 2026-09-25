@@ -8,7 +8,7 @@ class Stringable extends \Illuminate\Support\Stringable
 {
     final public function __construct(mixed $value = '')
     {
-        parent::__construct((string) $value);
+        parent::__construct($value);
     }
 
     public function indexOf(string $needle, bool $caseSensitive = true): bool | int

@@ -30,6 +30,7 @@ it('should calculate pages', function (array $items, int $perPage, int $pages): 
     [range(1, 21), 20, 2],
     [range(1, 40), 20, 2],
     [range(1, 42), 20, 3],
+    [range(1, 3), 1, 3],
     [range(1, 42), 0, 0],
     [range(1, 42), -1, 0],
 ]);
@@ -76,6 +77,17 @@ it('should evaluate ArrayIterator to be valid', function (): void {
     $iterator = new ArrayIterator(['foo', 'bar', 'baz']);
 
     expect($iterator->valid())->toBeTrue();
+});
+
+it('should be invalid past the last item', function (): void {
+    $iterator = new ArrayIterator(['foo']);
+    $iterator->next();
+
+    expect($iterator->valid())->toBeFalse();
+});
+
+it('should reindex associative items', function (): void {
+    expect(new ArrayIterator(['a' => 'foo', 'b' => 'bar'])->current())->toBe('foo');
 });
 
 it('should get items for specific page', function (array $items, int $page, int $perPage, array $expected): void {

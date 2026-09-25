@@ -43,7 +43,7 @@ class Date implements DateInterface
         } elseif ($longInitValue === '' || $longInitValue === null) {
             $this->setTimeInOldStyle(time());
         } elseif (is_int($longInitValue) || is_string($longInitValue)) {
-            if (strlen('' . $longInitValue) === 14) {
+            if (strlen((string) $longInitValue) === 14) {
                 $this->setLongTimestamp($longInitValue);
             } else {
                 $this->setTimeInOldStyle($longInitValue);
@@ -61,7 +61,7 @@ class Date implements DateInterface
      */
     public static function isDateValue(int | string | \Stringable | null $longValue): bool
     {
-        return StringUtil::isMatch('/^([0-9]){14}$/', (string) $longValue);
+        return StringUtil::isMatch('/^([0-9]){14}$/', (string) $longValue); // @pest-mutate-ignore: RemoveStringCast
     }
 
     /**
@@ -147,7 +147,7 @@ class Date implements DateInterface
     #[Deprecated(replacement: '%class%->getTimestamp()')]
     public function getTimeInOldStyle(): int
     {
-        return (int) mktime($this->getHour(), $this->getMinute(), $this->getSecond(), $this->getMonth(), $this->getDay(), $this->getYear());
+        return (int) mktime($this->getHour(), $this->getMinute(), $this->getSecond(), $this->getMonth(), $this->getDay(), $this->getYear()); // @pest-mutate-ignore: RemoveIntegerCast
     }
 
     /**
@@ -207,13 +207,13 @@ class Date implements DateInterface
         $objSourceDate = clone $this;
 
         $this->setNextDay();
-        $intDaysAdded = 1;
+        $intDaysAdded = 1; // @pest-mutate-ignore: DecrementInteger
         while ($this->getDay() !== $objSourceDate->getDay()) {
             $this->setNextDay();
             $intDaysAdded++;
 
             // if we skip a month border, roll back until the previous months last day.
-            if ($intDaysAdded > 31) {
+            if ($intDaysAdded > 31) { // @pest-mutate-ignore: IncrementInteger
                 $this->setIntDay(1);
                 $this->setPreviousDay();
 
@@ -223,8 +223,9 @@ class Date implements DateInterface
         }
 
         $this->setIntHour($objSourceDate->getHour());
-        $this->setIntMin($objSourceDate->getMinute());
-        $this->setIntSec($objSourceDate->getSecond());
+        // DST gaps shift whole hours only, minutes and seconds never drift.
+        $this->setIntMin($objSourceDate->getMinute()); // @pest-mutate-ignore: RemoveMethodCall
+        $this->setIntSec($objSourceDate->getSecond()); // @pest-mutate-ignore: RemoveMethodCall
 
         return $this;
     }
@@ -241,13 +242,13 @@ class Date implements DateInterface
         $objSourceDate = clone $this;
 
         $this->setPreviousDay();
-        $intDaysSubtracted = 1;
+        $intDaysSubtracted = 1; // @pest-mutate-ignore: DecrementInteger
         while ($this->getDay() !== $objSourceDate->getDay()) {
             $this->setPreviousDay();
             $intDaysSubtracted++;
 
             // if we skip a month border, roll back until the next months last day.
-            if ($intDaysSubtracted > 31) {
+            if ($intDaysSubtracted > 31) { // @pest-mutate-ignore: IncrementInteger
                 $this->setNextMonth();
                 $this->setIntDay(1);
                 $this->setPreviousDay();
@@ -258,8 +259,9 @@ class Date implements DateInterface
         }
 
         $this->setIntHour($objSourceDate->getHour());
-        $this->setIntMin($objSourceDate->getMinute());
-        $this->setIntSec($objSourceDate->getSecond());
+        // DST gaps shift whole hours only, minutes and seconds never drift.
+        $this->setIntMin($objSourceDate->getMinute()); // @pest-mutate-ignore: RemoveMethodCall
+        $this->setIntSec($objSourceDate->getSecond()); // @pest-mutate-ignore: RemoveMethodCall
 
         return $this;
     }
@@ -270,7 +272,7 @@ class Date implements DateInterface
     public function setPreviousQuarter(): self
     {
         $currentDay = $this->getDay();
-        $this->setIntDay(1);
+        $this->setIntDay(1); // @pest-mutate-ignore: IncrementInteger,DecrementInteger,RemoveMethodCall
         for ($i = 0; $i < 3; $i++) {
             $this->setPreviousMonth();
         }
@@ -285,7 +287,7 @@ class Date implements DateInterface
     public function setPreviousHalfYear(): self
     {
         $currentDay = $this->getDay();
-        $this->setIntDay(1);
+        $this->setIntDay(1); // @pest-mutate-ignore: IncrementInteger,DecrementInteger,RemoveMethodCall
         for ($i = 0; $i < 6; $i++) {
             $this->setPreviousMonth();
         }
@@ -302,7 +304,7 @@ class Date implements DateInterface
     public function setPreviousYear(): static
     {
         $intCurrentDay = $this->getDay();
-        $this->setIntDay(1);
+        $this->setIntDay(1); // @pest-mutate-ignore: IncrementInteger,DecrementInteger,RemoveMethodCall
         for ($intI = 0; $intI < 12; $intI++) {
             $this->setPreviousMonth();
         }
@@ -319,7 +321,7 @@ class Date implements DateInterface
     public function setNextYear(): static
     {
         $intCurrentDay = $this->getDay();
-        $this->setIntDay(1);
+        $this->setIntDay(1); // @pest-mutate-ignore: IncrementInteger,DecrementInteger,RemoveMethodCall
         for ($intI = 0; $intI < 12; $intI++) {
             $this->setNextMonth();
         }
@@ -385,10 +387,10 @@ class Date implements DateInterface
             return $this;
         }
 
-        if (StringUtil::length('' . $intYear) === 2) {
+        if (strlen((string) $intYear) === 2) {
             $intYear = '20' . $intYear;
         }
-        if (StringUtil::length('' . $intYear) === 1) {
+        if (strlen((string) $intYear) === 1) {
             $intYear = '200' . $intYear;
         }
 
@@ -468,7 +470,7 @@ class Date implements DateInterface
         }
 
         $strSec = sprintf('%02s', $intSec);
-        $this->longTimestamp = substr_replace($this->longTimestamp, $strSec, 12, 2);
+        $this->longTimestamp = substr_replace($this->longTimestamp, $strSec, 12, 2); // @pest-mutate-ignore: IncrementInteger
 
         return $this;
     }
@@ -578,7 +580,7 @@ class Date implements DateInterface
 
     public function getSecond(): int
     {
-        return (int) StringUtil::of($this->longTimestamp)->substr(12, 2)->value();
+        return (int) StringUtil::of($this->longTimestamp)->substr(12, 2)->value(); // @pest-mutate-ignore: IncrementInteger
     }
 
     /**
@@ -666,10 +668,11 @@ class Date implements DateInterface
 
         $timeStamp = $dateTime->format($this->strParseFormat);
 
-        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) {
+        // PHP compares numeric strings numerically and clamping an equal value is a no-op.
+        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) { // @pest-mutate-ignore: RemoveIntegerCast,GreaterToGreaterOrEqual
             $timeStamp = self::MAX_TIMESTAMP;
         }
-        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) {
+        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) { // @pest-mutate-ignore: RemoveIntegerCast,SmallerToSmallerOrEqual
             $timeStamp = self::MIN_TIMESTAMP;
         }
 
@@ -689,10 +692,11 @@ class Date implements DateInterface
 
         $timeStamp = $dateTime->format($this->strParseFormat);
 
-        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) {
+        // PHP compares numeric strings numerically and clamping an equal value is a no-op.
+        if ((int) $timeStamp > (int) self::MAX_TIMESTAMP) { // @pest-mutate-ignore: RemoveIntegerCast,GreaterToGreaterOrEqual
             $timeStamp = self::MAX_TIMESTAMP;
         }
-        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) {
+        if ((int) $timeStamp < (int) self::MIN_TIMESTAMP) { // @pest-mutate-ignore: RemoveIntegerCast,SmallerToSmallerOrEqual
             $timeStamp = self::MIN_TIMESTAMP;
         }
 

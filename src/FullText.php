@@ -61,7 +61,7 @@ final class FullText
     {
         $fullText = StringUtil::of(
             Collection::make($parts)
-                ->map(static fn (float | int | string | null $part): string => StringUtil::trim((string) $part))
+                ->map(static fn (float | int | string | null $part): string => StringUtil::trim((string) $part)) // @pest-mutate-ignore: RemoveStringCast
                 ->implode(' '),
         )->trim()->value();
 

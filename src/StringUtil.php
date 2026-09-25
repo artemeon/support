@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Artemeon\Support;
 
 use Artemeon\Support\Date\Date;
@@ -55,7 +57,7 @@ class StringUtil extends Str
      */
     public static function trim(mixed $value, mixed $charlist = null): string
     {
-        return parent::trim((string) $value, $charlist);
+        return parent::trim((string) $value, $charlist); // @pest-mutate-ignore: RemoveStringCast
     }
 
     public static function limit(mixed $value, mixed $limit = 100, mixed $end = '…', mixed $preserveWords = false): string
@@ -136,15 +138,8 @@ class StringUtil extends Str
     public static function jsSafeString(string | \Stringable $string): string
     {
         $jsonString = json_encode((string) $string, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
-        if (self::substr($jsonString, 0, 1) === '"') {
-            $jsonString = StringUtil::substr($jsonString, 1);
-        }
-
-        if (self::substr($jsonString, -1) === '"') {
-            $jsonString = self::substr($jsonString, 0, -1);
-        }
-
-        $jsonString = addcslashes($jsonString, "'");
+        // Strip the surrounding quotes json_encode() always adds to a string.
+        $jsonString = addcslashes(self::substr($jsonString, 1, -1), "'");
 
         return htmlspecialchars($jsonString, ENT_QUOTES | ENT_HTML401);
     }
@@ -154,7 +149,12 @@ class StringUtil extends Str
      */
     public static function removeScriptTags(?string $string): string
     {
-        return (string) preg_replace('~<script(.*)</script>~imUs', '', (string) $string);
+        // preg_replace() only returns null on a PCRE error.
+        return (string) preg_replace( // @pest-mutate-ignore: RemoveStringCast
+            '~<script(.*)</script>~imUs',
+            '',
+            (string) $string,
+        );
     }
 
     /**

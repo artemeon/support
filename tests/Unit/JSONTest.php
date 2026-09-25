@@ -20,6 +20,10 @@ describe('JSON Encoding', function (): void {
             ['foo', '"foo"'],
             ['foo"bar', '"foo\\"bar"'],
         ]);
+
+    it('should throw when data cannot be encoded', function (): void {
+        JSON::encode(NAN);
+    })->throws(JsonException::class);
 });
 
 describe('Simple JSON Decoding', function (): void {
