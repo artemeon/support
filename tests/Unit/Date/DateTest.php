@@ -478,7 +478,7 @@ final class DateTest extends TestCase
     #[DataProvider('setTimeDataProvider')]
     public function testSetTime(int $hour, int $minutes, int $seconds, ?int $expectedHour, ?int $expectedMinutes, ?int $expectedSeconds): void
     {
-        $date = new Date();
+        $date = new Date('20250130000000');
         $modifiedDate = $date->setTime($hour, $minutes, $seconds);
 
         self::assertEquals($expectedHour ?? $date->getHour(), $modifiedDate->getHour());
