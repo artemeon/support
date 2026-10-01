@@ -1,10 +1,10 @@
 <p align="center"><img src=".github/header.svg" alt="AGP@ARTEMEON Support Package"></p>
 
-# AGP@ARTEMEON Support Package
-
-[![CI](https://img.shields.io/github/actions/workflow/status/artemeon/support/ci.yml?branch=main&event=push&style=for-the-badge&label=CI)](https://github.com/artemeon/support/actions/workflows/ci.yml)
-![PHPStan](https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg?style=for-the-badge)
-[![License](https://img.shields.io/github/license/artemeon/support?style=for-the-badge)](https://packagist.org/packages/artemeon/support)
+<p align="center">
+  <a href="https://github.com/artemeon/support/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/artemeon/support/ci.yml?branch=main&event=push&style=for-the-badge&label=CI" alt="CI"></a>
+  <img src="https://img.shields.io/badge/PHPStan-level%2010-brightgreen.svg?style=for-the-badge" alt="PHPStan">
+  <a href="https://packagist.org/packages/artemeon/support"><img src="https://img.shields.io/github/license/artemeon/support?style=for-the-badge" alt="License"></a>
+</p>
 
 Shared helpers for the AGP@ARTEMEON software suite: dates, strings, JSON, pagination iterators and a small full-text matcher.
 
