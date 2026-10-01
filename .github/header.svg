@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="AGP@ARTEMEON Support Package">
+  <defs>
+    <pattern id="minor" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M16 0H0V16" fill="none" stroke="#ffffff" stroke-opacity="0.08"/>
+    </pattern>
+    <pattern id="major" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M80 0H0V80" fill="none" stroke="#ffffff" stroke-opacity="0.18"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#e0f2fe"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="360" rx="16" fill="#1d4ed8"/>
+  <rect width="1280" height="360" rx="16" fill="url(#minor)"/>
+  <rect width="1280" height="360" rx="16" fill="url(#major)"/>
+
+  <g fill="none" stroke="#e0f2fe" stroke-width="1.5">
+    <!-- drawing frame -->
+    <rect x="24" y="24" width="1232" height="312"/>
+    <rect x="32" y="32" width="1216" height="296" stroke-opacity="0.5" stroke-width="1"/>
+
+    <!-- title text box + dimension lines -->
+    <rect x="96" y="104" width="640" height="128" stroke-dasharray="6 6" stroke-opacity="0.6"/>
+    <path d="M96 268V252M736 268V252" stroke-opacity="0.7"/>
+    <path d="M100 260H732" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <path d="M60 104H76M60 232H76" stroke-opacity="0.7"/>
+    <path d="M68 108V228" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+
+    <!-- part drawing: cube with circle -->
+    <path d="M880 120L960 80L1040 120L960 160Z"/>
+    <path d="M880 120V220L960 260V160M1040 120V220L960 260"/>
+    <circle cx="960" cy="120" r="18" stroke-dasharray="4 4"/>
+    <path d="M960 60V280M860 120H1060" stroke-opacity="0.4" stroke-dasharray="12 4 2 4"/>
+
+    <!-- title block -->
+    <rect x="1080" y="232" width="168" height="96"/>
+    <path d="M1080 264H1248M1080 296H1248M1164 296V328"/>
+  </g>
+
+  <g fill="#e0f2fe" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <text x="112" y="148" font-size="22" letter-spacing="6" fill-opacity="0.8">AGP@ARTEMEON</text>
+    <text x="110" y="208" font-size="60" font-weight="700">Support Package</text>
+    <text x="416" y="252" font-size="14" text-anchor="middle">composer require artemeon/support</text>
+    <text x="52" y="168" font-size="14" text-anchor="middle" transform="rotate(-90 52 168)">PHP 8.4</text>
+    <text x="1064" y="90" font-size="13" fill-opacity="0.8">DETAIL A</text>
+    <text x="1164" y="254" font-size="13" text-anchor="middle">ARTEMEON/SUPPORT</text>
+    <text x="1164" y="286" font-size="13" text-anchor="middle">LICENSE: MIT</text>
+    <text x="1122" y="318" font-size="13" text-anchor="middle">SCALE 1:1</text>
+    <text x="1206" y="318" font-size="13" text-anchor="middle">REV A</text>
+  </g>
+</svg>
