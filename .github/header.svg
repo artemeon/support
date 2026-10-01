@@ -21,9 +21,9 @@
     <rect x="32" y="32" width="1216" height="296" stroke-opacity="0.5" stroke-width="1"/>
 
     <!-- title text box + dimension lines -->
-    <rect x="96" y="104" width="640" height="128" stroke-dasharray="6 6" stroke-opacity="0.6"/>
-    <path d="M96 268V252M736 268V252" stroke-opacity="0.7"/>
-    <path d="M100 260H732" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <rect x="96" y="104" width="712" height="128" stroke-dasharray="6 6" stroke-opacity="0.6"/>
+    <path d="M96 268V252M808 268V252" stroke-opacity="0.7"/>
+    <path d="M100 260H804" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
     <path d="M60 104H76M60 232H76" stroke-opacity="0.7"/>
     <path d="M68 108V228" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
 
@@ -33,15 +33,27 @@
     <circle cx="960" cy="120" r="18" stroke-dasharray="4 4"/>
     <path d="M960 60V280M860 120H1060" stroke-opacity="0.4" stroke-dasharray="12 4 2 4"/>
 
+    <!-- ARTEMEON logomark -->
+    <svg x="116" y="120" width="105" height="96" viewBox="124 157 776 710" stroke="#ffffff" stroke-width="1" stroke-opacity="1">
+      <g transform="matrix(32.1162,0,0,32.201,-844.176,-1850.26) matrix(0.996381,0,0,0.993757,-0.177315,0.185071)">
+        <path d="M49.024,63.159L46.992,68.194L52.02,68.194L54.053,63.159L49.024,63.159Z" fill="#ffffff"/>
+        <path d="M42.591,79.094L40.558,84.11L45.586,84.11L47.619,79.094L42.591,79.094Z"/>
+        <path d="M45.8,71.127L43.769,76.143L48.803,76.143L50.836,71.127L45.8,71.127Z"/>
+        <path d="M37.833,71.127L35.801,76.143L40.836,76.143L42.869,71.127L37.833,71.127Z"/>
+        <path d="M41.059,63.159L39.027,68.194L44.056,68.194L46.093,63.159L41.059,63.159Z"/>
+        <path d="M33.095,63.159L31.064,68.194L36.09,68.194L38.125,63.159L33.095,63.159Z"/>
+      </g>
+    </svg>
+
     <!-- title block -->
     <rect x="1080" y="232" width="168" height="96"/>
     <path d="M1080 264H1248M1080 296H1248M1164 296V328"/>
   </g>
 
   <g fill="#e0f2fe" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
-    <text x="112" y="148" font-size="22" letter-spacing="6" fill-opacity="0.8">AGP@ARTEMEON</text>
-    <text x="110" y="208" font-size="60" font-weight="700">Support Package</text>
-    <text x="416" y="252" font-size="14" text-anchor="middle">composer require artemeon/support</text>
+    <text x="244" y="148" font-size="22" letter-spacing="6" fill-opacity="0.8">AGP@ARTEMEON</text>
+    <text x="242" y="208" font-size="60" font-weight="700">Support Package</text>
+    <text x="452" y="252" font-size="14" text-anchor="middle">composer require artemeon/support</text>
     <text x="52" y="168" font-size="14" text-anchor="middle" transform="rotate(-90 52 168)">PHP 8.4</text>
     <text x="1064" y="90" font-size="13" fill-opacity="0.8">DETAIL A</text>
     <text x="1164" y="254" font-size="13" text-anchor="middle">ARTEMEON/SUPPORT</text>
