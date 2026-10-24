@@ -244,7 +244,6 @@ final class StringUtilTest extends TestCase
         self::assertCount(3, $arrResult);
 
         // Empty delimiter
-        $strString = '1,0,3';
         $arrResult = StringUtil::toArray($strString, '');
         self::assertNull($arrResult);
 
