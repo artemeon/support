@@ -20,6 +20,18 @@ class JSON
     }
 
     /**
+     * @param positive-int $depth
+     */
+    public static function encodeSilently(mixed $value, int $flags = 0, int $depth = 512): ?string
+    {
+        try {
+            return self::encode($value, $flags, $depth);
+        } catch (JsonException) {
+            return null;
+        }
+    }
+
+    /**
      * @param int<1, 2147483647> $depth
      *
      * @throws JsonException

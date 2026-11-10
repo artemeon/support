@@ -80,6 +80,7 @@ StringUtil::of(' Hello World ')->trim()->indexOf('World'); // 6
 use Artemeon\Support\JSON;
 
 JSON::encode(['a' => 1]);           // '{"a":1}'
+JSON::encodeSilently(NAN);          // null instead of throwing
 JSON::decode('{"a":1}', true);      // ['a' => 1], throws JsonException on invalid input
 JSON::decodeSilently('{oops');      // null instead of throwing
 JSON::decodeAsArray('[1,2]');       // throws if the result is not an array

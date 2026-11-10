@@ -24,6 +24,13 @@ describe('JSON Encoding', function (): void {
     it('should throw when data cannot be encoded', function (): void {
         JSON::encode(NAN);
     })->throws(JsonException::class);
+
+    it('should return null and not throw when encoding fails', function (): void {
+        expect(JSON::encodeSilently(NAN))
+            ->toBeNull()
+            ->and(JSON::encodeSilently(['foo' => 'bar']))
+            ->toBe('{"foo":"bar"}');
+    });
 });
 
 describe('Simple JSON Decoding', function (): void {
